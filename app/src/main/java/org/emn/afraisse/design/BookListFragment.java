@@ -1,10 +1,9 @@
 package org.emn.afraisse.design;
 
-import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -70,7 +69,7 @@ public class BookListFragment extends Fragment {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    bookList = null;
+                    bookList = new ArrayList<>();
                     Toast.makeText(BookListFragment.this.getActivity(), "Unable to retrieve books", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -78,6 +77,12 @@ public class BookListFragment extends Fragment {
             bookList = savedInstanceState.getParcelableArrayList(getString(R.string.book_list_key));
             ((BookListRecyclerAdapter) recyclerView.getAdapter()).setBooks(bookList);
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (bookList != null) ((BookListRecyclerAdapter) recyclerView.getAdapter()).setBooks(bookList);
     }
 
     @Override
