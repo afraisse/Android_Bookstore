@@ -28,13 +28,19 @@ public class LibraryActivity extends AppCompatActivity implements BookListRecycl
         fragmentFrame1 = findViewById(R.id.fragment_frame_1);
 
         boolean landscape = getResources().getBoolean(R.bool.landscape);
-        if (landscape) {
 
-        } else {
-            fragmentFrame2.setVisibility(View.GONE);
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_frame_1, new BookListFragment(), BookListFragment.class.getSimpleName())
                     .commit();
+        }
+
+        if (!landscape) {
+            fragmentFrame2.setVisibility(View.GONE);
+        } else {
+            // If in landscape we clean the fragment1 backstack
+            getSupportFragmentManager()
+                    .popBackStack(BookListFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 
@@ -50,11 +56,12 @@ public class LibraryActivity extends AppCompatActivity implements BookListRecycl
         if (getResources().getBoolean(R.bool.landscape)) {
             fragmentFrame2.setVisibility(View.VISIBLE);
 
+            // Landscape - we use an other frame
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_frame_2, fragment, BookDetailFragment.class.getSimpleName())
-                    .addToBackStack(BookListFragment.class.getSimpleName())
                     .commit();
         } else {
+            // We replace the fragment in the same frame
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_frame_1, fragment, BookDetailFragment.class.getSimpleName())
                     .addToBackStack(BookListFragment.class.getSimpleName())
