@@ -72,6 +72,10 @@ public class BookListRecyclerAdapter extends RecyclerView.Adapter<BookListRecycl
         return books.size();
     }
 
+    /**
+     * Update dataset
+     * @param books dataset
+     */
     public void setBooks(List<Book> books) {
         this.books = books;
         this.notifyDataSetChanged();

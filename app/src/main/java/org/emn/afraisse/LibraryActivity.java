@@ -16,18 +16,14 @@ import org.emn.afraisse.model.Book;
  */
 public class LibraryActivity extends AppCompatActivity implements BookListRecyclerAdapter.BookItemClickListener {
 
-    private View fragmentFrame1;
-    private View fragmentFrame2;
+    private View fragmentFrameLandscape;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
 
-        fragmentFrame2 = findViewById(R.id.fragment_frame_2);
-        fragmentFrame1 = findViewById(R.id.fragment_frame_1);
-
-        boolean landscape = getResources().getBoolean(R.bool.landscape);
+        fragmentFrameLandscape = findViewById(R.id.fragment_frame_2);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -35,8 +31,8 @@ public class LibraryActivity extends AppCompatActivity implements BookListRecycl
                     .commit();
         }
 
-        if (!landscape) {
-            fragmentFrame2.setVisibility(View.GONE);
+        if (!getResources().getBoolean(R.bool.landscape)) {
+            fragmentFrameLandscape.setVisibility(View.GONE);
         } else {
             // If in landscape we clean the fragment1 backstack
             getSupportFragmentManager()
@@ -54,7 +50,7 @@ public class LibraryActivity extends AppCompatActivity implements BookListRecycl
 
         // goto fragment detail
         if (getResources().getBoolean(R.bool.landscape)) {
-            fragmentFrame2.setVisibility(View.VISIBLE);
+            fragmentFrameLandscape.setVisibility(View.VISIBLE);
 
             // Landscape - we use an other frame
             getSupportFragmentManager().beginTransaction()
