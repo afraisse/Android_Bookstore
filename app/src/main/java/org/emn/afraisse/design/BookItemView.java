@@ -45,7 +45,7 @@ public class BookItemView extends LinearLayout {
         this.titleTextView.setText(book.title);
         Glide.with(this.getContext())
                 .load(book.cover)
-                .centerCrop()
+                .fitCenter()
                 .into(this.coverImageView);
 
     }

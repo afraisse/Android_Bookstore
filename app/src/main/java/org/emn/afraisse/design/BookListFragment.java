@@ -3,12 +3,14 @@ package org.emn.afraisse.design;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.emn.afraisse.R;
 import org.emn.afraisse.model.Book;
@@ -29,14 +31,7 @@ import retrofit.Retrofit;
 public class BookListFragment extends Fragment {
 
     private List<Book> bookList;
-    private CallbackListener listener;
     private RecyclerView recyclerView;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        listener = (CallbackListener) context;
-    }
 
     @Nullable
     @Override
@@ -52,37 +47,43 @@ public class BookListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://henri-potier.xebia.fr/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            LibraryService library = retrofit.create(LibraryService.class);
+            Call<List<Book>> call = library.listBook();
+
+            // Call service async
+            call.enqueue(new Callback<List<Book>>() {
+                @Override
+                public void onResponse(Response<List<Book>> response, Retrofit retrofit) {
+                    bookList = response.body();
+                    // hand over book data
+                    ((BookListRecyclerAdapter) recyclerView.getAdapter()).setBooks(bookList);
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    bookList = null;
+                    Toast.makeText(BookListFragment.this.getActivity(), "Unable to retrieve books", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            bookList = savedInstanceState.getParcelableArrayList(getString(R.string.book_list_key));
+            ((BookListRecyclerAdapter) recyclerView.getAdapter()).setBooks(bookList);
+        }
+    }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        // TODO : Add listener on tap item
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://henri-potier.xebia.fr/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        LibraryService library = retrofit.create(LibraryService.class);
-        Call<List<Book>> call = library.listBook();
-
-        // Call service async
-        call.enqueue(new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Response<List<Book>> response, Retrofit retrofit) {
-                bookList = response.body();
-                // hand over book data
-                ((BookListRecyclerAdapter) recyclerView.getAdapter()).setBooks(bookList);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                bookList = null;
-            }
-        });
-
-        super.onViewCreated(view, savedInstanceState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(getString(R.string.book_list_key), (ArrayList<? extends Parcelable>) bookList);
     }
 
-    public interface CallbackListener {
-        void onBookSelected(Book book);
-    }
 }
