@@ -1,10 +1,10 @@
-# android_afraisse
+# Android_Bookstore
 
-Rendu projet Android EMN FILA3 - Adrian Fraisse
+A classic Bookstore app designed for a programming class.
 
-## Fonctionnalités :
+## Features :
 
-- Liste de livres implémentées avec une CustomeView & un RecyclerView
-- Support de l'orientation Landscape avec des Fragments
-- Affichage des images avec Glide
-- Récupération des livres avec Retrofit
+- Book list using CustomvView & RecyclerView
+- Landscape support using Fragments
+- Using Glide for images and Retrofit for REST calls
+
